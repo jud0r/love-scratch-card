@@ -74,13 +74,13 @@ h1 {
 }
 
 .hearts:nth-child(3) {
-  bottom: 10%;
+  bottom: 5%;
   left: 15%;
   animation-delay: 1.5s;
 }
 
 .hearts:nth-child(4) {
-  bottom: 15%;
+  bottom: 8%;
   right: 5%;
   animation-delay: 2.2s;
 }
