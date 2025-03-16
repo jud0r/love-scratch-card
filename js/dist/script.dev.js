@@ -9,7 +9,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 document.addEventListener('DOMContentLoaded', function () {
-  var actions = ['Beijar', 'Acariciar', 'Massagear', 'Morder', 'Lamber', 'Chupar', 'Sussurrar em', 'Tocar'];
+  var actions = ['Massagear', 'Lamber', 'Chupar', 'Mordiscar', 'Ele decide', 'Acariciar', 'Ela decide', 'Beijar'];
   var bodyParts = ['Bunda', 'Pescoço', 'Coxas', 'Virilha', 'Parte íntima', 'Boca', 'Pés', 'Peito'];
 
   function limitAndShuffleArray(array) {

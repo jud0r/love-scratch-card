@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
   const actions = [
-    'Beijar',
-    'Acariciar',
     'Massagear',
-    'Morder',
     'Lamber',
     'Chupar',
-    'Sussurrar em',
-    'Tocar',
+    'Mordiscar',
+    'Ele decide',
+    'Acariciar',
+    'Ela decide',
+    'Beijar',
   ]
 
   const bodyParts = [
