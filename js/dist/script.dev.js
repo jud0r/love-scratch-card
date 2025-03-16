@@ -78,7 +78,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function initScratch(canvas, card) {
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d', {
+      willReadFrequently: true
+    });
     var isDrawing = false;
     var lastX = 0;
     var lastY = 0;
@@ -201,7 +203,9 @@ document.addEventListener('DOMContentLoaded', function () {
       canvas.width = card.offsetWidth;
       canvas.height = card.offsetHeight; // Redraw the covering
 
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext('2d', {
+        willReadFrequently: true
+      });
       ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     });

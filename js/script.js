@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function initScratch(canvas, card) {
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
     let isDrawing = false
     let lastX = 0
     let lastY = 0
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
       canvas.height = card.offsetHeight
 
       // Redraw the covering
-      const ctx = canvas.getContext('2d')
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
       ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     })
