@@ -21,6 +21,34 @@ document.addEventListener('DOMContentLoaded', function () {
     'Peito',
   ]
 
+  function limitAndShuffleArray(array, limit = 8) {
+    // Shuffle array primeiro
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+
+    // Retorna exatamente o número de itens solicitado
+    // Se o array for menor, repete itens para alcançar o número desejado
+    let result = []
+
+    if (shuffled.length >= limit) {
+      // Se temos itens suficientes, pegamos apenas os primeiros [limit]
+      result = shuffled.slice(0, limit)
+    } else {
+      // Se não temos itens suficientes, repetimos itens para atingir [limit]
+      while (result.length < limit) {
+        const remainingNeeded = limit - result.length
+        result = result.concat(
+          shuffled.slice(0, Math.min(remainingNeeded, shuffled.length))
+        )
+      }
+    }
+
+    return result
+  }
+
   function shuffleArray(array) {
     const newArray = [...array]
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -34,7 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById(containerId)
     container.innerHTML = ''
 
-    const shuffledItems = shuffleArray(items)
+    // Sempre usa exatamente 8 itens (4 por linha em 2 linhas)
+    const shuffledItems = limitAndShuffleArray(items, 8)
 
     shuffledItems.forEach((item) => {
       const card = document.createElement('div')
@@ -55,8 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
       icon.innerHTML = '❤'
 
       const scratchText = document.createElement('div')
-      scratchText.className = 'scratch-text'
-      scratchText.textContent = 'Raspe!'
 
       overlayContent.appendChild(icon)
       overlayContent.appendChild(scratchText)
@@ -83,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastX = 0
     let lastY = 0
     let scratchedPercentage = 0
-    const totalPixels = canvas.width * canvas.height
     const overlay = card.querySelector('.scratch-overlay')
     const content = card.querySelector('.card-content')
 
@@ -95,20 +121,20 @@ document.addEventListener('DOMContentLoaded', function () {
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
-    // Modificação: Tornando o conteúdo visível desde o início
     content.style.opacity = '0'
     content.style.transition = 'opacity 0.2s'
 
     // Initial resize
     setTimeout(resizeCanvas, 100)
 
-    // Handle events
+    // Handle events - usar passive: false para melhorar desempenho em toque
     canvas.addEventListener('mousedown', startDrawing)
-    canvas.addEventListener('touchstart', startDrawingTouch)
+    canvas.addEventListener('touchstart', startDrawingTouch, { passive: false })
     canvas.addEventListener('mousemove', draw)
-    canvas.addEventListener('touchmove', drawTouch)
+    canvas.addEventListener('touchmove', drawTouch, { passive: false })
     canvas.addEventListener('mouseup', stopDrawing)
     canvas.addEventListener('touchend', stopDrawing)
+    canvas.addEventListener('touchcancel', stopDrawing)
 
     function startDrawing(e) {
       isDrawing = true
@@ -126,7 +152,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function draw(e) {
       if (!isDrawing) return
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.lineWidth = 20
+
+      // Aumentar largura da linha para facilitar a raspagem
+      ctx.lineWidth = window.innerWidth <= 768 ? 30 : 20
       ctx.lineCap = 'round'
 
       ctx.beginPath()
@@ -148,7 +176,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const y = touch.clientY - rect.top
 
       ctx.globalCompositeOperation = 'destination-out'
-      ctx.lineWidth = 20
+
+      // Aumentar largura da linha para facilitar a raspagem em dispositivos touch
+      ctx.lineWidth = 30
       ctx.lineCap = 'round'
 
       ctx.beginPath()
@@ -172,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Count transparent pixels (every 4th value is the alpha channel)
       for (let i = 3; i < pixels.length; i += 4) {
         if (pixels[i] < 10) {
-          // Considering pixels with alpha <script 10 as scratched
+          // Considering pixels with alpha < 10 as scratched
           transparentPixels++
         }
       }
@@ -186,8 +216,10 @@ document.addEventListener('DOMContentLoaded', function () {
       // Ajustar a opacidade do overlay inversamente
       overlay.style.opacity = (1 - scratchedPercentage / 100).toFixed(2)
 
-      // Se mais de 70% for raspado, revelar todo o cartão
-      if (scratchedPercentage > 50) {
+      // Revelar mais cedo em dispositivos móveis (40% em vez de 50%)
+      const revealThreshold = window.innerWidth <= 768 ? 40 : 50
+
+      if (scratchedPercentage > revealThreshold) {
         canvas.style.display = 'none'
         overlay.style.display = 'none'
         content.style.opacity = '1'

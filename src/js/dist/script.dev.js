@@ -12,14 +12,45 @@ document.addEventListener('DOMContentLoaded', function () {
   var actions = ['Beijar', 'Acariciar', 'Massagear', 'Morder', 'Lamber', 'Chupar', 'Sussurrar em', 'Tocar'];
   var bodyParts = ['Bunda', 'Pescoço', 'Coxas', 'Virilha', 'Parte íntima', 'Boca', 'Pés', 'Peito'];
 
+  function limitAndShuffleArray(array) {
+    var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 8;
+
+    // Shuffle array primeiro
+    var shuffled = _toConsumableArray(array);
+
+    for (var i = shuffled.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var _ref = [shuffled[j], shuffled[i]];
+      shuffled[i] = _ref[0];
+      shuffled[j] = _ref[1];
+    } // Retorna exatamente o número de itens solicitado
+    // Se o array for menor, repete itens para alcançar o número desejado
+
+
+    var result = [];
+
+    if (shuffled.length >= limit) {
+      // Se temos itens suficientes, pegamos apenas os primeiros [limit]
+      result = shuffled.slice(0, limit);
+    } else {
+      // Se não temos itens suficientes, repetimos itens para atingir [limit]
+      while (result.length < limit) {
+        var remainingNeeded = limit - result.length;
+        result = result.concat(shuffled.slice(0, Math.min(remainingNeeded, shuffled.length)));
+      }
+    }
+
+    return result;
+  }
+
   function shuffleArray(array) {
     var newArray = _toConsumableArray(array);
 
     for (var i = newArray.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
-      var _ref = [newArray[j], newArray[i]];
-      newArray[i] = _ref[0];
-      newArray[j] = _ref[1];
+      var _ref2 = [newArray[j], newArray[i]];
+      newArray[i] = _ref2[0];
+      newArray[j] = _ref2[1];
     }
 
     return newArray;
@@ -27,8 +58,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function createCards(items, containerId) {
     var container = document.getElementById(containerId);
-    container.innerHTML = '';
-    var shuffledItems = shuffleArray(items);
+    container.innerHTML = ''; // Sempre usa exatamente 8 itens (4 por linha em 2 linhas)
+
+    var shuffledItems = limitAndShuffleArray(items, 8);
     shuffledItems.forEach(function (item) {
       var card = document.createElement('div');
       card.className = 'scratch-card';
@@ -43,8 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
       icon.className = 'scratch-icon';
       icon.innerHTML = '❤';
       var scratchText = document.createElement('div');
-      scratchText.className = 'scratch-text';
-      scratchText.textContent = 'Raspe!';
       overlayContent.appendChild(icon);
       overlayContent.appendChild(scratchText);
       overlay.appendChild(overlayContent); // Create canvas for scratch effect
@@ -66,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var lastX = 0;
     var lastY = 0;
     var scratchedPercentage = 0;
-    var totalPixels = canvas.width * canvas.height;
     var overlay = card.querySelector('.scratch-overlay');
     var content = card.querySelector('.card-content'); // Set canvas dimensions
 
@@ -75,26 +104,30 @@ document.addEventListener('DOMContentLoaded', function () {
       canvas.height = card.offsetHeight;
       ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-    } // Modificação: Tornando o conteúdo visível desde o início
-
+    }
 
     content.style.opacity = '0';
     content.style.transition = 'opacity 0.2s'; // Initial resize
 
-    setTimeout(resizeCanvas, 100); // Handle events
+    setTimeout(resizeCanvas, 100); // Handle events - usar passive: false para melhorar desempenho em toque
 
     canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('touchstart', startDrawingTouch);
+    canvas.addEventListener('touchstart', startDrawingTouch, {
+      passive: false
+    });
     canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchmove', drawTouch);
+    canvas.addEventListener('touchmove', drawTouch, {
+      passive: false
+    });
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
 
     function startDrawing(e) {
       isDrawing = true;
-      var _ref2 = [e.offsetX, e.offsetY];
-      lastX = _ref2[0];
-      lastY = _ref2[1];
+      var _ref3 = [e.offsetX, e.offsetY];
+      lastX = _ref3[0];
+      lastY = _ref3[1];
     }
 
     function startDrawingTouch(e) {
@@ -108,16 +141,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function draw(e) {
       if (!isDrawing) return;
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineWidth = 20;
+      ctx.globalCompositeOperation = 'destination-out'; // Aumentar largura da linha para facilitar a raspagem
+
+      ctx.lineWidth = window.innerWidth <= 768 ? 30 : 20;
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
-      var _ref3 = [e.offsetX, e.offsetY];
-      lastX = _ref3[0];
-      lastY = _ref3[1];
+      var _ref4 = [e.offsetX, e.offsetY];
+      lastX = _ref4[0];
+      lastY = _ref4[1];
       checkScratchedPercentage();
     }
 
@@ -128,8 +162,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var touch = e.touches[0];
       var x = touch.clientX - rect.left;
       var y = touch.clientY - rect.top;
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineWidth = 20;
+      ctx.globalCompositeOperation = 'destination-out'; // Aumentar largura da linha para facilitar a raspagem em dispositivos touch
+
+      ctx.lineWidth = 30;
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
@@ -151,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       for (var i = 3; i < pixels.length; i += 4) {
         if (pixels[i] < 10) {
-          // Considering pixels with alpha <script 10 as scratched
+          // Considering pixels with alpha < 10 as scratched
           transparentPixels++;
         }
       }
@@ -160,9 +195,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       content.style.opacity = (scratchedPercentage / 100).toFixed(2); // Ajustar a opacidade do overlay inversamente
 
-      overlay.style.opacity = (1 - scratchedPercentage / 100).toFixed(2); // Se mais de 70% for raspado, revelar todo o cartão
+      overlay.style.opacity = (1 - scratchedPercentage / 100).toFixed(2); // Revelar mais cedo em dispositivos móveis (40% em vez de 50%)
 
-      if (scratchedPercentage > 50) {
+      var revealThreshold = window.innerWidth <= 768 ? 40 : 50;
+
+      if (scratchedPercentage > revealThreshold) {
         canvas.style.display = 'none';
         overlay.style.display = 'none';
         content.style.opacity = '1';
