@@ -239,6 +239,10 @@ footer {
   .card-container {
     padding: 1rem;
   }
+
+  .header {
+    display: none;
+  }
 }
 
 /* Regras para dispositivos móveis em modo paisagem */
@@ -293,6 +297,10 @@ footer {
     .card-content {
       font-size: 0.9rem;
     }
+
+    .header {
+      display: none;
+    }
   }
 
   /* Para telas extremamente pequenas em paisagem */
@@ -313,6 +321,10 @@ footer {
     .scratch-card {
       height: 40px;
     }
+
+    .header {
+      display: none;
+    }
   }
 
   .instructions {
@@ -325,6 +337,10 @@ footer {
     padding: 0.5rem 1.5rem;
     font-size: 0.9rem;
   }
+
+  .header {
+    display: none;
+  }
 }
 
 /* Ajuste no tamanho dos cartões para melhor visualização em telas menores */
@@ -336,6 +352,10 @@ footer {
 
   .card-content {
     font-size: 0.9rem;
+  }
+
+  .header {
+    display: none;
   }
 }
 
@@ -401,6 +421,10 @@ footer {
     padding: 0.5rem 1.5rem;
     font-size: 0.9rem;
   }
+
+  .header {
+    display: none;
+  }
 }
 
 /* Para dispositivos muito pequenos ou estreitos em qualquer orientação */
@@ -424,6 +448,10 @@ footer {
 
   .scratch-text {
     font-size: 0.6rem;
+  }
+
+  .header {
+    display: none;
   }
 }
 
@@ -460,6 +488,10 @@ footer {
   .scratch-section {
     margin-bottom: 0.7rem;
   }
+
+  .header {
+    display: none;
+  }
 }
 
 /* Remover regra original que muda para 2 colunas em telas médias */
@@ -469,5 +501,9 @@ footer {
       4,
       1fr
     ); /* Sobrescrever a regra que muda para 2 colunas */
+  }
+
+  .header {
+    display: none;
   }
 }
