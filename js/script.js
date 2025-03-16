@@ -49,15 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return result
   }
 
-  function shuffleArray(array) {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
-  }
-
   function createCards(items, containerId) {
     const container = document.getElementById(containerId)
     container.innerHTML = ''

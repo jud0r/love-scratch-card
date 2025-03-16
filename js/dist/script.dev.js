@@ -43,19 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return result;
   }
 
-  function shuffleArray(array) {
-    var newArray = _toConsumableArray(array);
-
-    for (var i = newArray.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var _ref2 = [newArray[j], newArray[i]];
-      newArray[i] = _ref2[0];
-      newArray[j] = _ref2[1];
-    }
-
-    return newArray;
-  }
-
   function createCards(items, containerId) {
     var container = document.getElementById(containerId);
     container.innerHTML = ''; // Sempre usa exatamente 8 itens (4 por linha em 2 linhas)
@@ -125,9 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function startDrawing(e) {
       isDrawing = true;
-      var _ref3 = [e.offsetX, e.offsetY];
-      lastX = _ref3[0];
-      lastY = _ref3[1];
+      var _ref2 = [e.offsetX, e.offsetY];
+      lastX = _ref2[0];
+      lastY = _ref2[1];
     }
 
     function startDrawingTouch(e) {
@@ -149,9 +136,9 @@ document.addEventListener('DOMContentLoaded', function () {
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
-      var _ref4 = [e.offsetX, e.offsetY];
-      lastX = _ref4[0];
-      lastY = _ref4[1];
+      var _ref3 = [e.offsetX, e.offsetY];
+      lastX = _ref3[0];
+      lastY = _ref3[1];
       checkScratchedPercentage();
     }
 
